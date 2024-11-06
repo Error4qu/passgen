@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react'
+import { useCallback, useState, useEffect,useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -9,6 +9,8 @@ function App() {
   const [num, isnumber] = useState(false);
   const [chr, ischar] = useState(false);
   const [inpu, setinpu] = useState("");
+
+  
   const passgen = useCallback(() => {
     let pass = "";
     let str = "ABCDEFGHIJKLMNOPRSTUVWXYZ";
@@ -21,9 +23,19 @@ function App() {
     }
     setinpu(pass);
   }, [length, num, chr,]);
+
+  
 useEffect(() => {
   passgen();
 }, [length, num,chr,passgen])
+
+const passref = useRef(null)
+
+const handleCopy = useCallback(() =>{
+  passref.current?.select();
+  passref.current?.setSelectionRange(0,9);
+  window.navigator.clipboard.writeText(inpu)
+},[inpu])
 
 return (
   <div className='w-full max-w-md mx-auto shadow-md rounded-lg px-4 my-auto text-orange-500 bg-gray-700'>
@@ -34,9 +46,10 @@ return (
         className='outline-none w-full py-1 px-3 rounded-md'
         placeholder='password'
         readOnly
+        ref = {passref}
       />
       <button
-        //onClick={handleCopy}
+        onClick={handleCopy}
         className='bg-blue-700 px-3 mx-2 rounded-md outline-none py-0.5'>
         Copy
       </button>
@@ -51,7 +64,7 @@ return (
           max={100}
           onChange={(e) => setlength(Number(e.target.value))}
           />
-        <label>Length ({length})</label>
+        <lavel>Length ({length})</lavel>
       </div>
       <div className='flex gap-1' onClick={() => isnumber(!num)}>
         <input type="checkbox" checked={num} onChange={() => {}} />
